@@ -14,18 +14,26 @@ macro_rules! exit_with {
     };
 }
 
+fn print_usage(exe_name: &str) {
+    eprintln!("{} <process_name> [process_args]", exe_name);
+}
+
 fn main() {
     let mut args = args();
 
-    if args.next().is_none() {
-        eprintln!("ERROR: CLI arguments are malformed.");
-        exit_with!(ExitCode::MalformedArgs);
-    }
+    let exe_name = match args.next() {
+        Some(en) => en,
+        None => {
+            eprintln!("ERROR: CLI arguments are malformed.");
+            exit_with!(ExitCode::MalformedArgs);
+        }
+    };
 
     let base_cmd = match args.next() {
         Some(bc) => bc,
         None => {
             eprintln!("ERROR: No process provided to restart!");
+            print_usage(&exe_name);
             exit_with!(ExitCode::NoProcess);
         }
     };
